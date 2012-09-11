@@ -1,5 +1,0 @@
-L:\source\noti\aTechBrake\bin\Debug\aTechBrake.dll
-L:\source\noti\aTechBrake\bin\Debug\aTechBrake.pdb
-L:\source\noti\aTechBrake\obj\Debug\ResolveAssemblyReference.cache
-L:\source\noti\aTechBrake\obj\Debug\aTechBrake.dll
-L:\source\noti\aTechBrake\obj\Debug\aTechBrake.pdb
