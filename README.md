@@ -31,11 +31,11 @@ To use airbrake-dotnet, you will need an API key and some information about the 
 
 The initialiser for the class takes the following parameters:
 
-*bool ssl - Should connections to the endpoint use HTTPS?
-*string host - The hostname of the endpoint
-*string path - Path to the Airbrake API
-*string apikey - The API key for your applications
-*string environment - An environment name to identify this application/environment
+* bool ssl - Should connections to the endpoint use HTTPS?
+* string host - The hostname of the endpoint
+* string path - Path to the Airbrake API
+* string apikey - The API key for your applications
+* string environment - An environment name to identify this application/environment
 
 If you are reporting exceptions to Codebase, you might initialise the library with the following code:
 
