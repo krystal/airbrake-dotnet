@@ -8,7 +8,7 @@ using System.Text.RegularExpressions;
 using System.Net;
 using System.IO;
 
-namespace aTechBrake
+namespace airbrake
 {
     public class ExceptionHandler
     {
