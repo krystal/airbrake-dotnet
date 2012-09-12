@@ -1,4 +1,4 @@
-#aTechBrake
+#airbrake-dotnet
 
 This is a .NET library which allows you to report exceptions using the Airbrake API. aTech Media uses this
 to report errors to projects in [Codebase](http://codebasehq.com).
@@ -20,7 +20,7 @@ using airbrake;
 
 VB.NET
 ```vb
-Imports airbrake;
+Imports airbrake
 ```
 
 ##Usage
