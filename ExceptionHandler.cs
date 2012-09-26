@@ -27,9 +27,9 @@ namespace airbrake
             _environment = environment;
         }
 
-        public bool Send(Exception ex)
+        public bool Send(Exception ex, List<KeyValuePair> customParams = null)
         {
-            XmlDocument xml = GetXML(ex);
+            XmlDocument xml = GetXML(ex, customParams);
 
             // Create a request using a URL that can receive a post. 
             string url;
@@ -75,7 +75,7 @@ namespace airbrake
             return true;
         }
 
-        private XmlDocument GetXML(Exception ex)
+        private XmlDocument GetXML(Exception ex, List<KeyValuePair> customParams = null)
         {
 
             //Create the xml document and Notice element
@@ -175,6 +175,15 @@ namespace airbrake
             plat.InnerText = Assembly.GetEntryAssembly().GetName().ProcessorArchitecture.ToString();
             cgi.AppendChild(plat);
 
+            //Custom Params
+            foreach (KeyValuePair param in customParams)
+            {
+                XmlElement p = doc.CreateElement("var");
+                p.SetAttribute("key", param.Key);
+                p.InnerText = param.Value;
+                cgi.AppendChild(p);
+            }
+
             //Append the CGI and request
             request.AppendChild(cgi);
             root.AppendChild(request);
@@ -230,5 +239,35 @@ namespace airbrake
             };
             return backtrace;
         }
+    }
+
+    public class KeyValuePair
+    {
+
+        string _key = null;
+        string _value = null;
+
+        public KeyValuePair()
+        {
+        }
+
+        public KeyValuePair(string n_key, string n_value)
+        {
+            _key = n_key;
+            _value = n_value;
+        }
+
+        public string Key
+        {
+            get { return _key; }
+            set { _key = value; }
+        }
+
+        public string Value
+        {
+            get { return _value; }
+            set { _value = value; }
+        }
+
     }
 }
