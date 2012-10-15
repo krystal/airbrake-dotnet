@@ -177,7 +177,7 @@ namespace airbrake
 	    
             if (customParams != NULL)
 	    {
-            	/Custom Params
+            	//Custom Params
             	foreach (KeyValuePair param in customParams)
             	{
                 	XmlElement p = doc.CreateElement("var");
