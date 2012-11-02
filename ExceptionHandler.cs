@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -175,8 +175,8 @@ namespace airbrake
             plat.InnerText = Assembly.GetEntryAssembly().GetName().ProcessorArchitecture.ToString();
             cgi.AppendChild(plat);
 	    
-            if (customParams != NULL)
-	    {
+            if (customParams != null)
+	        {
             	//Custom Params
             	foreach (KeyValuePair param in customParams)
             	{
@@ -185,7 +185,7 @@ namespace airbrake
                 	p.InnerText = param.Value;
                 	cgi.AppendChild(p);
             	}
-	    }
+	        }
 
             //Append the CGI and request
             request.AppendChild(cgi);
