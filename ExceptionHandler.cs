@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -174,15 +174,18 @@ namespace airbrake
             plat.SetAttribute("key", "Application Platform");
             plat.InnerText = Assembly.GetEntryAssembly().GetName().ProcessorArchitecture.ToString();
             cgi.AppendChild(plat);
-
-            //Custom Params
-            foreach (KeyValuePair param in customParams)
-            {
-                XmlElement p = doc.CreateElement("var");
-                p.SetAttribute("key", param.Key);
-                p.InnerText = param.Value;
-                cgi.AppendChild(p);
-            }
+	    
+            if (customParams != NULL)
+	    {
+            	//Custom Params
+            	foreach (KeyValuePair param in customParams)
+            	{
+                	XmlElement p = doc.CreateElement("var");
+                	p.SetAttribute("key", param.Key);
+                	p.InnerText = param.Value;
+                	cgi.AppendChild(p);
+            	}
+	    }
 
             //Append the CGI and request
             request.AppendChild(cgi);
