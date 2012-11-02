@@ -34,7 +34,7 @@ namespace airbrake
             // Create a request using a URL that can receive a post. 
             string url;
             if (_ssl){ url = "https://" + _host + _path; }
-            else{ url = "https://" + _host + _path;}
+            else{ url = "http://" + _host + _path;}
             WebRequest request = WebRequest.Create(url);
 
             // Set our POST data
