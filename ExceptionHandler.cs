@@ -83,6 +83,8 @@ namespace airbrake
             XmlDeclaration dec = doc.CreateXmlDeclaration("1.0", "UTF-8", null);
             doc.AppendChild(dec);
             XmlElement root = doc.CreateElement("notice");
+            root.SetAttribute("version", "2.3");
+
 
             //API Key
             XmlElement apikey = doc.CreateElement("api-key");
