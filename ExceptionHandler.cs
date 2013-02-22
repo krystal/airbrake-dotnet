@@ -126,13 +126,14 @@ namespace airbrake
             error.AppendChild(message);
 
             //error backtrace
-            XmlElement backtrace = doc.CreateElement("backtrace");
-            
-            //Add backtrace lines
-            foreach(XmlElement line in ParseBacktrace(doc, ex.StackTrace)){
-                backtrace.AppendChild(line);
+            if (!String.IsNullOrEmpty(ex.StackTrace)){
+            	XmlElement backtrace = doc.CreateElement("backtrace");
+            	//Add backtrace lines
+            	foreach(XmlElement line in ParseBacktrace(doc, ex.StackTrace)){
+                	backtrace.AppendChild(line);
+            	}
+            	error.AppendChild(backtrace);
             }
-            error.AppendChild(backtrace);
 
             //Append the error
             root.AppendChild(error);
