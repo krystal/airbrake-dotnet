@@ -12,11 +12,11 @@ namespace airbrake
 {
     public class ExceptionHandler
     {
-        private string _apikey;
-        private bool _ssl;
-        private string _host;
-        private string _path;
-        private string _environment;
+        private readonly string _apikey;
+        private readonly bool _ssl;
+        private readonly string _host;
+        private readonly string _path;
+        private readonly string _environment;
 
         public ExceptionHandler(bool ssl, string host, string path, string apikey, string environment)
         {
@@ -27,7 +27,7 @@ namespace airbrake
             _environment = environment;
         }
 
-        public bool Send(Exception ex, List<KeyValuePair> customParams = null)
+        public bool Send(Exception ex, List<KeyValuePair<string, string>> customParams = null)
         {
             XmlDocument xml = GetXML(ex, customParams);
 
@@ -75,7 +75,7 @@ namespace airbrake
             return true;
         }
 
-        private XmlDocument GetXML(Exception ex, List<KeyValuePair> customParams = null)
+        private XmlDocument GetXML(Exception ex, IEnumerable<KeyValuePair<String, String>> customParams = null)
         {
 
             //Create the xml document and Notice element
@@ -122,14 +122,14 @@ namespace airbrake
 
             //error message
             XmlElement message = doc.CreateElement("message");
-            message.InnerText = ex.Message;
+            message.InnerText = BuildCompleteMessage(ex);
             error.AppendChild(message);
 
             //error backtrace
             XmlElement backtrace = doc.CreateElement("backtrace");
             
             //Add backtrace lines
-            foreach(XmlElement line in ParseBacktrace(doc, ex.StackTrace)){
+            foreach(XmlElement line in ParseBacktrace(doc, ex)){
                 backtrace.AppendChild(line);
             }
             error.AppendChild(backtrace);
@@ -147,7 +147,7 @@ namespace airbrake
 
             //Request action
             XmlElement action = doc.CreateElement("action");
-            action.InnerText = ex.TargetSite.Name;
+            action.InnerText = ex.TargetSite != null ? ex.TargetSite.Name: string.Empty;
             request.AppendChild(action);
 
             //CGI data
@@ -180,7 +180,7 @@ namespace airbrake
             if (customParams != null)
 	        {
             	//Custom Params
-            	foreach (KeyValuePair param in customParams)
+            	foreach (KeyValuePair<string,string> param in customParams)
             	{
                 	XmlElement p = doc.CreateElement("var");
                 	p.SetAttribute("key", param.Key);
@@ -213,66 +213,62 @@ namespace airbrake
 
         }
 
-        private List<XmlElement> ParseBacktrace(XmlDocument doc, string stack)
+        private string BuildCompleteMessage(Exception exception)
         {
+            string message = exception.Message + " - ";
 
-            List<XmlElement> backtrace = new List<XmlElement>();
-            string[] lines = Regex.Split(stack, "\r\n");
-
-            foreach (string line in lines)
+            while (exception.InnerException != null)
             {
-                XmlElement l = doc.CreateElement("line");
+                exception = exception.InnerException;
+                message += (exception.Message + " - ");
+            }
+            return message;
+        }
 
-                String number = Regex.Match(line, @":line \d+").Value.Replace(":line", "");
-                String file = Regex.Match(line, @"in (.*):").Value.Replace("in ", "").Replace(":", "");
-                String method = Regex.Match(line, @"at .*\)").Value.Replace("at ", "");
+        private IEnumerable<XmlElement> ParseBacktrace(XmlDocument doc, Exception ex)
+        {
+            List<XmlElement> backtrace = new List<XmlElement>();
+            while (ex != null)
+            {
+                string stack = ex.StackTrace;
 
-                if (!String.IsNullOrEmpty(number))
+                if (stack != null)
                 {
-                    l.SetAttribute("number", number);
-                }
-                if (!String.IsNullOrEmpty(file))
-                {
-                    l.SetAttribute("file", file);
-                }
-                if (!String.IsNullOrEmpty(method))
-                {
-                    l.SetAttribute("method", method);
-                }
-                backtrace.Add(l);
+                    string[] lines = Regex.Split(stack, "\r\n");
 
-            };
+                    foreach (string line in lines)
+                    {
+                        XmlElement l = doc.CreateElement("line");
+
+                        String number = Regex.Match(line, @":line \d+").Value.Replace(":line", "");
+                        String file = Regex.Match(line, @"in (.*):").Value.Replace("in ", "").Replace(":", "");
+                        String method = Regex.Match(line, @"at .*\)").Value.Replace("at ", "");
+
+                        if (!String.IsNullOrEmpty(number))
+                        {
+                            l.SetAttribute("number", number);
+                        }
+                        if (!String.IsNullOrEmpty(file))
+                        {
+                            l.SetAttribute("file", file);
+                        }
+                        if (!String.IsNullOrEmpty(method))
+                        {
+                            l.SetAttribute("method", method);
+                        }
+                        backtrace.Add(l);
+
+                    }
+                }
+                ex = ex.InnerException;
+                if (ex != null)
+                {
+                    XmlElement l = doc.CreateElement("line");
+                    l.SetAttribute("file", ex.GetType().Name);
+                    backtrace.Add(l);
+                }
+            }
             return backtrace;
         }
-    }
-
-    public class KeyValuePair
-    {
-
-        string _key = null;
-        string _value = null;
-
-        public KeyValuePair()
-        {
-        }
-
-        public KeyValuePair(string n_key, string n_value)
-        {
-            _key = n_key;
-            _value = n_value;
-        }
-
-        public string Key
-        {
-            get { return _key; }
-            set { _key = value; }
-        }
-
-        public string Value
-        {
-            get { return _value; }
-            set { _value = value; }
-        }
-
     }
 }
