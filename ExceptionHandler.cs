@@ -269,7 +269,7 @@ namespace Airbrake
             XmlElement app = doc.CreateElement("var");
             bits.SetAttribute("key", "Application Version");
             bits.InnerText = Assembly.GetEntryAssembly().GetName().Version.ToString();
-            cgi.AppendChild(bits);
+            cgi.AppendChild(app);
 
             // CGI App-plat
             XmlElement plat = doc.CreateElement("var");
