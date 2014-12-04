@@ -164,7 +164,6 @@ namespace Airbrake
             }
 
             // Clean up the streams.
-            dataStream.Close();
             response.Close();
             return true;
         }
