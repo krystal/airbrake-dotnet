@@ -265,17 +265,21 @@ namespace Airbrake
             bits.InnerText = System.Environment.OSVersion.Platform.ToString();
             cgi.AppendChild(bits);
 
-            // CGI App
-            XmlElement app = doc.CreateElement("var");
-            bits.SetAttribute("key", "Application Version");
-            bits.InnerText = Assembly.GetEntryAssembly().GetName().Version.ToString();
-            cgi.AppendChild(bits);
+            Assembly entryAssembly = Assembly.GetEntryAssembly();
 
-            // CGI App-plat
-            XmlElement plat = doc.CreateElement("var");
-            plat.SetAttribute("key", "Application Platform");
-            plat.InnerText = Assembly.GetEntryAssembly().GetName().ProcessorArchitecture.ToString();
-            cgi.AppendChild(plat);
+            if (entryAssembly != null) {
+                // CGI App
+                XmlElement app = doc.CreateElement("var");
+                app.SetAttribute("key", "Application Version");
+                app.InnerText = entryAssembly.GetName().Version.ToString();
+                cgi.AppendChild(app);
+
+                // CGI App-plat
+                XmlElement plat = doc.CreateElement("var");
+                plat.SetAttribute("key", "Application Platform");
+                plat.InnerText = entryAssembly.GetName().ProcessorArchitecture.ToString();
+                cgi.AppendChild(plat);
+            }
 
             if (customParams != null)
             {
@@ -296,10 +300,12 @@ namespace Airbrake
             // Environment info
             XmlElement env = doc.CreateElement("server-environment");
 
-            // Project root
-            XmlElement proj = doc.CreateElement("project-root");
-            proj.InnerText = Assembly.GetEntryAssembly().Location;
-            env.AppendChild(proj);
+            if (entryAssembly != null) {
+                // Project root
+                XmlElement proj = doc.CreateElement("project-root");
+                proj.InnerText = entryAssembly.Location;
+                env.AppendChild(proj);
+            }
 
             // Environment
             XmlElement envname = doc.CreateElement("environment-name");
