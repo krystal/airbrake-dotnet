@@ -223,21 +223,24 @@ namespace Airbrake
             message.InnerText = ex.Message;
             error.AppendChild(message);
 
-            // error backtrace
-            XmlElement backtrace = doc.CreateElement("backtrace");
-
-            // Add backtrace lines
-            foreach (XmlElement line in this.ParseBacktrace(doc, ex.StackTrace))
+            //error backtrace
+            if (!String.IsNullOrEmpty(ex.StackTrace))
             {
-                backtrace.AppendChild(line);
+            	  XmlElement backtrace = doc.CreateElement("backtrace");
+              
+            	  //Add backtrace lines
+            	  foreach (XmlElement line in this.ParseBacktrace(doc, ex.StackTrace))
+                {
+                  	backtrace.AppendChild(line);
+              	}
+            	
+                error.AppendChild(backtrace);
             }
-
-            error.AppendChild(backtrace);
 
             // Append the error
             root.AppendChild(error);
 
-            // Reuqest information
+            // Request information
             XmlElement request = doc.CreateElement("request");
 
             // Request component
